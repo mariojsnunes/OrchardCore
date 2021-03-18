@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Apis\Lucene\Recipes\luceneHyphenTest.json" />
     <None Remove="Localization\PoFiles\EntryWithComments.po" />
     <None Remove="Localization\PoFiles\EntryWithContext.po" />
     <None Remove="Localization\PoFiles\EntryWithEscapedCharacters.po" />
@@ -40,6 +41,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Apis\Lucene\Recipes\luceneHyphenTest.json" />
     <EmbeddedResource Include="Localization\PoFiles\EntryWithComments.po" />
     <EmbeddedResource Include="Localization\PoFiles\EntryWithContext.po" />
     <EmbeddedResource Include="Localization\PoFiles\EntryWithEscapedCharacters.po" />
