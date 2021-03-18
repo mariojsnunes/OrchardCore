@@ -192,7 +192,7 @@ namespace OrchardCore.Tests.Apis.Lucene
 
                 // Test
                 var contentItems = queryResults.Items.Select(x => ((JObject)x).ToObject<ContentItem>());
-                Assert.Equal(4, queryResults.Items.Count());
+                Assert.Equal(7, queryResults.Items.Count());
             }
         }
 
