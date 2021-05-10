@@ -13,9 +13,9 @@ namespace OrchardCore.Tests.Apis.Lucene
             ShellHost = Site.Services.GetRequiredService<IShellHost>();
         }
 
-        public LuceneContext(string recipe)
+        public LuceneContext()
         {
-            this.WithRecipe(recipe);
+            this.WithRecipe("luceneQueryTest");
         }
     }
 }

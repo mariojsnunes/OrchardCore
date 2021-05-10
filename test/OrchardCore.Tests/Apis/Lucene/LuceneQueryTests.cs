@@ -16,7 +16,7 @@ namespace OrchardCore.Tests.Apis.Lucene
         [Fact]
         public async Task BoostingTitleShouldHaveTitlesContainingOrchardAppearFirst()
         {
-            using (var context = new LuceneContext("luceneQueryTest"))
+            using (var context = new LuceneContext())
             {
                 await context.InitializeAsync();
 
@@ -52,7 +52,7 @@ namespace OrchardCore.Tests.Apis.Lucene
         [Fact]
         public async Task BoostingBodyShouldHaveTitlesNotContainingOrchardAppearFirst()
         {
-            using (var context = new LuceneContext("luceneQueryTest"))
+            using (var context = new LuceneContext())
             {
                 await context.InitializeAsync();
 
@@ -89,13 +89,13 @@ namespace OrchardCore.Tests.Apis.Lucene
         [Fact]
         public async Task SimpleQueryWildcardHasResults()
         {
-            using (var context = new LuceneContext("luceneQueryTest"))
+            using (var context = new LuceneContext())
             {
                 await context.InitializeAsync();
                 // Act
                 // Should find articles with "Orchard" in the title
 
-                string index = "ArticleIndex";
+                var index = "ArticleIndex";
 
                 // { "from": 0, "size": 1, "query": { "simple_query_string": { "analyze_wildcard": true, "fields": ["Content.ContentItem.DisplayText.Normalized"], "query": "orch*" } } }
                 object dynamicQuery = new
@@ -113,7 +113,7 @@ namespace OrchardCore.Tests.Apis.Lucene
                     }
                 };
 
-                string query = JsonConvert.SerializeObject(dynamicQuery);
+                var query = JsonConvert.SerializeObject(dynamicQuery);
 
                 var content = await context.Client.GetAsync($"api/lucene/content?indexName={index}&query={query}");
                 var queryResults = await content.Content.ReadAsAsync<LuceneQueryResults>();
@@ -129,16 +129,16 @@ namespace OrchardCore.Tests.Apis.Lucene
         [Fact]
         public async Task TwoWildcardQueriesWithBoostHasResults()
         {
-            using (var context = new LuceneContext("luceneQueryTest"))
+            using (var context = new LuceneContext())
             {
                 await context.InitializeAsync();
 
                 // Act
                 // Should find articles with "Orchard" in the title
-                string index = "ArticleIndex";
+                var index = "ArticleIndex";
 
                 // { "from": 0, "size": 10, "query":{ "bool": { "should": [ { "wildcard": {  "Content.ContentItem.DisplayText.Normalized": { "value": "orch*", "boost": 2 } } },{ "wildcard": { "HtmlBodyPart": { "value": "orchar*", "boost": 5 } } } ] } } }
-                string query =
+                var query =
                     "{ \"from\": 0, \"size\": 10, \"query\":" +
                         "{ \"bool\": { \"should\": [ " +
                             "{ \"wildcard\": {  \"Content.ContentItem.DisplayText.Normalized\": { \"value\": \"orch*\", \"boost\": 2 } } }," +
@@ -159,42 +159,5 @@ namespace OrchardCore.Tests.Apis.Lucene
                 Assert.Contains("Orchard", contentItems.ElementAt(3).DisplayText, StringComparison.OrdinalIgnoreCase);
             };
         }
-
-        [Fact]
-        public async Task ShouldIgnoreHyphenDisplayText()
-        {
-            using (var context = new LuceneContext("luceneHyphenTest"))
-            {
-                await context.InitializeAsync();
-
-                // Act
-                var index = "ArticleIndex";
-                // { "from": 0, "size": 2, "query": { "simple_query_string": { "analyze_wildcard": true, "fields": ["Content.ContentItem.DisplayText.Normalized^2", "HtmlBodyPart"], "query": "orchard*" } } }
-                var dynamicQuery = new
-                {
-                    from = 0,
-                    size = 10,
-                    query = new
-                    {
-                        simple_query_string = new
-                        {
-                            analyze_wildcard = true,
-                            fields = new string[] { "Article.Title", "Content.ContentItem.DisplayText.Normalized" },
-                            query = "core*"
-                        }
-                    }
-                };
-
-                var query = JsonConvert.SerializeObject(dynamicQuery);
-
-                var content = await context.Client.GetAsync($"api/lucene/content?indexName={index}&query={query}");
-                var queryResults = await content.Content.ReadAsAsync<LuceneQueryResults>();
-
-                // Test
-                var contentItems = queryResults.Items.Select(x => ((JObject)x).ToObject<ContentItem>());
-                Assert.Equal(7, queryResults.Items.Count());
-            }
-        }
-
     }
 }

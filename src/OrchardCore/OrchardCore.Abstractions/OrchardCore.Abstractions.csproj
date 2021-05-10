@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-
     <!-- NuGet properties-->
     <Title>OrchardCore Abstractions</Title>
     <Description>$(OCFrameworkDescription)
@@ -16,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="ZString" />
   </ItemGroup>
 
 </Project>
